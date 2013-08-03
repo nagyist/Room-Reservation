@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+	<title>GVSU Room Reservation</title>
+
+	<link rel="stylesheet" type="text/css" href="resources/css/reset.css"/>
+	<link rel="stylesheet" type="text/css" href="resources/css/libui.css"/>
+
+	<link rel="stylesheet" type="text/css" href="http://gvsu.edu/cms3/assets/741ECAAE-BD54-A816-71DAF591D1D7955C/libui.css" />
+	<link rel="stylesheet" type="text/css" href="resources/css/styles.css"/>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+</head>
+
+
+<body>
+
+	<div class="header-wrapper">
+		<a href="index.html" class="title"><h3>Room Reservation</h3></a>
+	</div>
+
+
+	<div class="line info">
+
+		<div class = "sticky">
+
+			<div class = "left span2" style="padding-bottom: .5em; text-align: center; padding-top: .5em">
+
+				<span style="font-size: 1.2em;" id="room"></span>
+
+			</div>
+
+			<div class = "left span2 fit" style="padding-bottom: .5em; text-align: center;">
+
+				<!--<span class = "arrow" style="float: left">&#8592;</span>-->
+				<span style="font-size: 1.2em;" id="when"></span>
+
+				<!--<a href="#" class="next-arrow" id="nextDay">&#8594;</a>-->
+
+			</div>
+
+		</div>
+
+	</div>
+
+
+	<div class="wrapper" style="padding-bottom: 1.2em;">
+
+
+	<div class="line">
+
+		<div class = "span2 space">
+
+			<a href="#" class="prev-day day-button" id="prevDay">PREV DAY</a>
+
+			<a href="#" class="next-day day-button" id="nextDay">NEXT DAY</a>
+
+		</div>
+
+	</div>
+
+
+	<div id = "here_table" class = "left span2 box-grey when" style="padding-top: 1em; margin-top: 1em;">
+	</div>
+
+
+	</div>
+
+
+	<div class="footer" id="footer">
+
+		<a href="index.html" id="selectTime" class="footer-button">Select this Time</a>
+
+	</div>
+
+
+
+</div>
+
+</body>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+<script type="text/javascript">
+
+
+$(document).ready(function() {
+
+
+	function hideURLbar() {
+
+		// When ready...
+		window.addEventListener("load",function() {
+			// Set a timeout...
+			setTimeout(function(){
+			// Hide the address bar!
+			window.scrollTo(0, 1);
+			}, 0);
+		});
+
+	}
+
+
+	function getUrlVars() {
+	    var vars = {};
+	    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+	        vars[key] = value;
+	    });
+	    return vars;
+	}
+
+	   
+    var date = parseInt(getUrlVars()["date"]);
+    var month = parseInt(getUrlVars()["month"]);
+    var day = parseInt(getUrlVars()["day"]);
+    var hours = parseInt(getUrlVars()["hours"]);
+    var minutes = parseInt(getUrlVars()["minutes"]);
+
+    // calculate military time
+    var nowTime = hours * 100 + minutes
+
+    var nowHours = hours;
+
+    //alert("hours: " + hours + ", minutes: " + minutes + ", " + "nowTime: " + nowTime);
+
+    var cancel = hours + 2;
+
+    if (cancel > 12) {
+    	cancel = cancel - 12;
+    	var cancelampm = "PM";
+    } else {
+    	var cancelampm = "AM"
+    }
+
+    minutes=((minutes < 10) ? "0" : "") + minutes;
+    ampm = (hours >= 12) ? "PM" : "AM";
+    hours=(hours > 12) ? hours-12 : hours;
+    hours=(hours == 0) ? 12 : hours;
+
+
+    var todayTime = new Date();
+    var todayDay = todayTime.getDay();
+    var todayDate = todayTime.getUTCDate();
+
+    var dayText = "day";
+
+    //alert ("month: " + month + ", todayDate: " + todayDate);
+
+
+    if (day > 7) {
+    	day = day - 7;
+    }
+
+    if (day == todayDay && date == todayDate) {
+    	dayText = "Today";
+    } else if (day == 1) {
+    	dayText = "Mon";
+    } else if (day == 2) {
+    	dayText = "Tue";
+    } else if (day == 3) {
+    	dayText = "Wed";
+    } else if (day == 4) {
+    	dayText = "Thu";
+    } else if (day == 5) {
+    	dayText = "Fri";
+    } else if (day == 6) {
+    	dayText = "Sat";
+    } else if (day == 7) {
+    	dayText = "Sun";
+    }
+
+    var nowDayText = dayText;
+	
+
+   	var cancelMin = "00";
+
+    var clock = dayText + " " + month + "/" + date + ", <b>" + hours + ":" + minutes + " " + ampm + " to " + cancel + ":" + cancelMin + " " + cancelampm + "</b>";
+
+
+    if(clock != document.getElementById('when').innerHTML) document.getElementById('when').innerHTML = clock;
+
+    var openTime = 800;
+    var closeTime = 2600;
+
+    var lengthOpen = closeTime - openTime;
+    var remOpenTime =  closeTime - nowTime;
+
+    var table = $('<table border="0" style="width: 100%;"></table>');
+
+
+    var rowTime = nowTime;
+
+    // if it's a next day, load row times from opening time
+    if (getUrlVars()["update"] == "true") { 
+
+    	var rowTime = openTime;
+
+    }
+
+
+
+    var rowTime = Math.round(rowTime/100);
+    var rowHours = rowTime;
+    var rowTime = rowTime * 100;
+
+    //alert("nowTime: " + nowTime + ", rowTime: " + rowTime + ", rowHours: " + rowHours + ", openTime: " + openTime + ", closeTime: " + closeTime);
+
+    var i = 0;
+
+	while (rowTime < closeTime ) {
+
+	    var row = $('<tr></tr>');
+	    var rowAMPM = (rowTime >= 1200) ? "PM" : "AM";
+
+	    if (rowTime >= 2400) {
+	    	rowAMPM = "AM";
+	    }
+
+	    rowHours=(rowHours > 12) ? rowHours-12 : rowHours;
+	    rowHours=(rowHours == 0) ? 12 : rowHours;
+
+
+	   	var tdTime = $("<td>" + rowHours + ":00 " + rowAMPM + "</td>");
+	   	var tdButton = $("<td><a id='" + rowTime + "'class='button-time open'>Open</a></td>");
+
+	   	
+	   	if ((i==0 || i==1) && (getUrlVars()["update"] != "true")) {
+	   		tdButton = $("<td><a id='" + rowTime + "'class='button-time taken'>Selected</a></td>");
+	   	}
+
+
+	   	if (rowTime == nowTime || rowTime == nowTime + 100) {
+
+	   		//alert("rowTime: " + rowTime);
+
+	   		tdButton = $("<td><a id='" + rowTime + "'class='button-time taken'>Selected</a></td>");
+	   	} else if (rowTime == 1200 || rowTime == 1300 || rowTime == 1900 || rowTime == 2000) {
+	   		tdButton = $("<td class='micro not-availalble'>Room Not Available</td>");
+	   	}
+
+
+	    row.append(tdTime);
+	    row.append(tdButton);
+	    table.append(row);
+
+	    rowTime = rowTime + 100;
+	    rowHours = rowHours + 1;
+
+	    i++;
+
+	}
+
+	$('#here_table').append(table);
+
+
+	var nextDate = date + 1;
+	var nextDay = day + 1;
+
+	if (nextDay > 7) {
+		nextDay = nextDay - 7;
+	}
+
+
+	var room = getUrlVars()["room"]
+	var building = getUrlVars()["building"];
+	var image = getUrlVars()["image"];
+	var tags = getUrlVars()["tags"];
+
+
+
+	function setContents() {
+
+		// set where variables
+		var room = getUrlVars()["room"]
+		var building = getUrlVars()["building"];
+
+		// replace %20 with a space
+		room = room.split('%20').join(' ');
+		building = building.split('%20').join(' ');
+
+		$('#room').text(room  + ", " + building);
+
+	}
+
+
+	hideURLbar();
+	setContents();
+
+
+	var idTime = 0;
+	var idCancelTime = 0;
+	var newTime = 0;
+	var newCancel = 0;
+	var newampm = "am/pm";
+	var newCancelampm = "am/pm";
+
+
+	$(".button-time").click(function() {
+
+
+		if ($(".taken").length > 1) {
+
+			$(".taken").text("Open").addClass("open").removeClass("taken");
+
+			idTime = $(this).attr('id');
+	    	newTime = Math.round(idTime/100);
+	    	newampm = (newTime >= 12) ? "PM" : "AM";
+
+	    	if (newTime > 24) {
+			    newTime = newTime - 24;
+			    newampm = "AM";
+			} else if (newTime > 12) {
+	    		newTime = newTime - 12;
+	    	}
+
+	    	newCancel = Math.round(idTime/100) + 1;
+	    	newCancelampm = (newCancel >= 12) ? "PM" : "AM";
+
+	    	if (newCancel > 24) {
+			    newCancel = newCancel - 24;
+			    newCancelampm = "AM";
+			} else if (newCancel > 12) {
+	    		newCancel = newCancel - 12;
+	    	}
+
+	    	//alert(newTime + ":00 " + newampm);
+
+		} else {
+
+			idCancelTime = $(this).attr('id');
+	    	newCancel = Math.round(idCancelTime/100) + 1;
+	    	
+	    	//alert("newCancel: " + newCancel);
+
+	    	newCancelampm = (newCancel >= 12) ? "PM" : "AM";
+
+	    	if (newCancel > 24) {
+			    newCancel = newCancel - 24;
+			    newCancelampm = "AM";
+			} else if (newCancel > 12) {
+	    		newCancel = newCancel - 12;
+	    	}
+
+	    	//alert("newCancel: " + newCancel + ":00 " + newCancelampm);
+		}
+
+		// update select this time button
+		$("#footer").html("<a href='index.html' id='selectTime' class='footer-button'>Select " + newTime + ":00 " + newampm + " to " + newCancel + ":00 " + newCancelampm + "</a>");
+
+		// Select this time button href updated
+		$('#selectTime').attr("href", "index.html?room=" + room + "&building=" + building + "&tags=" + tags + "&image=" + image + "&date=" + date + "&month=" + month + "&day=" + day + "&hours=" + Math.round(idTime/100) + "&minutes=00&update=true");
+
+		// update next day button
+		$('#nextDay').attr("href", "when.html?room=" + room + "&building=" + building + "&tags=" + tags + "&image=" + image + "&date=" + (parseInt(date)) + "&month=" + month + "&day=" + (parseInt(day) + 1) + "&hours=" + Math.round(idTime/100) + "&minutes=00&update=true");
+
+
+		// This would make the button blue when clicked
+		//$('#selectTime').addClass("footer-button-blue").removeClass("footer-button");
+
+
+	    var clock = nowDayText + " " + month + "/" + date + ", <b>" + newTime + ":00 " + newampm + " to " + newCancel + ":00" + newCancelampm + "</b>";
+
+	   	 if(clock != document.getElementById('when').innerHTML) document.getElementById('when').innerHTML = clock;
+
+
+		$(this).text("Selected").addClass("taken").removeClass("open");
+
+	});
+
+	//alert(nowHours);
+
+
+	// update next day button
+	$('#nextDay').attr("href", "when.html?room=" + room + "&building=" + building + "&tags=" + tags + "&image=" + image + "&date=" + (parseInt(date) + 1) + "&month=" + month + "&day=" + (parseInt(day) + 1) + "&hours=" + nowHours + "&minutes=00&update=true");
+
+	// update prev day button
+	$('#prevDay').attr("href", "when.html?room=" + room + "&building=" + building + "&tags=" + tags + "&image=" + image + "&date=" + (parseInt(date) - 1) + "&month=" + month + "&day=" + (parseInt(day) - 1) + "&hours=" + nowHours + "&minutes=00&update=true");
+
+
+		var tempDay = day;
+
+
+		day = day + 1;
+
+	    if (day > 7) {
+	    	day = day - 7;
+	    }
+
+	    if (day == 1) {
+	    	dayText = "Mon";
+	    } else if (day == 2) {
+	    	dayText = "Tue";
+	    } else if (day == 3) {
+	    	dayText = "Wed";
+	    } else if (day == 4) {
+	    	dayText = "Thu";
+	    } else if (day == 5) {
+	    	dayText = "Fri";
+	    } else if (day == 6) {
+	    	dayText = "Sat";
+	    } else if (day == 7) {
+	    	dayText = "Sun";
+	    }
+
+
+	$('#nextDay').text(dayText + " " + month + "/" + (parseInt(date) + 1));
+
+
+	if (getUrlVars()["update"] != "true") { 
+
+		$('#prevDay').hide();
+
+	} else {
+
+		$('#prevDay').show();
+
+	}
+
+	day = day - 2;
+
+    if (day == 1) {
+    	day = 6;
+    }
+
+    if (day == 2) {
+    	day = 7;
+    }
+
+    if (day == 1) {
+    	dayText = "Mon";
+    } else if (day == 2) {
+    	dayText = "Tue";
+    } else if (day == 3) {
+    	dayText = "Wed";
+    } else if (day == 4) {
+    	dayText = "Thu";
+    } else if (day == 5) {
+    	dayText = "Fri";
+    } else if (day == 6) {
+    	dayText = "Sat";
+    } else if (day == 7) {
+    	dayText = "Sun";
+    }
+
+	$('#prevDay').text(dayText + " " + month + "/" + (parseInt(date) - 1));
+
+	day = tempDay;
+
+
+
+});
+
+</script>
+
+
+</html>

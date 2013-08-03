@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+	<title>GVSU Room Reservation</title>
+
+	<link rel="stylesheet" type="text/css" href="resources/css/reset.css"/>
+	<link rel="stylesheet" type="text/css" href="resources/css/libui.css"/>
+
+	<link rel="stylesheet" type="text/css" href="http://gvsu.edu/cms3/assets/741ECAAE-BD54-A816-71DAF591D1D7955C/libui.css" />
+	<link rel="stylesheet" type="text/css" href="resources/css/styles.css"/>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+</head>
+
+
+<body>
+
+	<div class="header-wrapper">
+		<a href="index.html" class="title"><h3>Room Reservation</h3></a>
+	</div>
+
+
+<div class="wrapper">
+
+	<div class="line">
+
+		<div class = "left span2 space">
+
+			<span>Select a building:</span>
+
+		</div>
+
+	</div>
+
+	<div class="line">
+
+		<div class="left span2 building">
+
+			<a href="rooms.html">
+
+				<div class = "item-top">
+
+					<label class="building-title">Mary Idema Pew Library</label>
+
+					<img class="building-image smooth-edges" src="resources/img/maryi.jpg" alt="Mary Idema Pew Library"/>
+
+				</div>
+
+				<div class="item-bottom-grey">
+
+					<span>Select</span>
+
+				</div>
+
+			</a>
+
+		</div>
+
+
+		<div class="left span2 building"> 
+
+			<a href="index.html?room=Study%20Room&building=Steelcase%20Library&tags=8%20seats,white%20board,table&image=steelcase_room">
+
+				<div class = "item-top">
+
+					<label class="building-title">Steelcase Library</label>
+
+					<img class = "building-image smooth-edges" src="resources/img/steelcase.jpg" alt="Mary Idema Pew Library"/>
+
+				</div>
+
+				<div class="item-bottom-grey">
+
+					<span>Select</span>
+
+				</div>
+
+			</a>
+
+		</div>
+
+		<!--
+		<div class = "left span2 item box-grey">
+
+			<label>Kirkhof Center</label>
+			
+			<div class="image">
+				<a href="rooms.html">
+				<img class = "building" src="resources/img/kc.jpg" alt="Kirkhof Center"/>
+				</a>
+			</div>
+
+		</div>
+
+		<div class = "left span2 item box-grey">
+
+			<label>Mackinaw Hall</label>
+			
+			<div class="image">
+				<a href="rooms.html">
+				<img class = "building"src="resources/img/mackinaw.jpg" alt="Mackinaw Hall"/>
+				</a>
+			</div>
+
+		</div>
+		-->
+
+		</div>
+
+</div>
+</body>
+
+<script type="text/javascript">
+
+	// When ready...
+    window.addEventListener("load",function() {
+      // Set a timeout...
+      setTimeout(function(){
+        // Hide the address bar!
+        window.scrollTo(0, 1);
+      }, 0);
+    });
+
+</script>
+
+</html>

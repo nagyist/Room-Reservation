@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+	<title>GVSU Room Reservation</title>
+
+	<link rel="stylesheet" type="text/css" href="resources/css/reset.css"/>
+	<link rel="stylesheet" type="text/css" href="resources/css/libui.css"/>
+	<link rel="stylesheet" type="text/css" href="http://gvsu.edu/cms3/assets/741ECAAE-BD54-A816-71DAF591D1D7955C/libui.css" />
+	<link rel="stylesheet" type="text/css" href="resources/css/styles.css"/>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+</head>
+
+
+<body>
+
+	<div class="header-wrapper">
+		<a href="index.html" class="title"><h3>Room Reservation</h3></a>
+	</div>
+
+
+	<div class="wrapper">
+
+	<div class="line">
+
+		<div class = "left span2 space">
+
+			<span id="memo">We have a room available for you:</span>
+
+		</div>
+
+	</div>
+
+
+	<div class="line">
+
+		<div class = "left span2 block-item">
+
+			<a class="space" href="when.html" alt="Find a Room" id="when">
+
+				<div class="item-top">
+
+					<!--<span class="where-title">Today</span>-->
+					<span class="where-text" id="miniclock"> 2:00 PM to 4:00 PM</span>
+
+				</div>
+
+				<div class="item-bottom-grey">
+
+					<span>Change Time</span>
+
+				</div>
+			</a>
+
+		</div>
+
+
+		<div class = "left span2 block-item">
+
+			<a class="space" href="buildings.html" alt="Find a Room">
+
+				<div class="item-top">
+
+					<div class="deets">
+						<span class="where-title" id="room">Study Room</span>
+						<br>
+						<span class="where-text" id="building">Mary Idema Pew Library</span>
+						<br>
+
+						<!--div style="margin: .5em 0">
+							<span class="room-text">Six chairs around a conference table.</span>
+						</div-->
+
+						<div id="tags">
+						</div>
+
+					</div>
+
+					<div class="deets-img" id="image">
+					</div>
+
+				</div>
+
+
+				<div class="item-bottom-grey" style="position: relative; top: -2px;">
+
+					<span>Change Room</span>
+
+				</div>
+
+			</a>
+
+		</div>
+
+		<!--
+		<div class = "left span2 space">
+
+			<span class="micro">Not what you're looking for?: <a href="#">Search rooms available at any time</a></span>
+
+		</div>
+		-->
+
+		<div class = "left span2">
+
+			<input class="lib-button button space" name="post" type="button" value="Reserve Now" onclick="location.href='login.html';" />
+
+		</div>
+
+	</div>
+
+
+</div>
+</body>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+<script type="text/javascript">
+
+
+$(document).ready(function() {
+
+
+	// When ready...
+	window.addEventListener("load",function() {
+		// Set a timeout...
+		setTimeout(function(){
+		// Hide the address bar!
+		window.scrollTo(0, 1);
+		}, 0);
+	});
+
+
+	function getUrlVars() {
+	    var vars = {};
+	    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+	        vars[key] = value;
+	    });
+	    return vars;
+	}
+
+
+	if (typeof getUrlVars()["room"] != "undefined") {
+
+		//alert("room defined");
+
+		// set where variables
+		var room = getUrlVars()["room"]
+		var building = getUrlVars()["building"];
+		var image = getUrlVars()["image"];
+		var tags = getUrlVars()["tags"];
+
+	} else {
+
+		//alert("room undefined");
+
+		// load default room
+		var room = "Conference%20Room";
+		var building = "Mary%20Idema%20Pew%20Library";
+		var image = "study_room";
+		var tags = "6%20seats,table,white%20board,tv,webcam";
+		
+	}
+
+
+	// replace %20 with a space
+	room = room.split('%20').join(' ');
+	building = building.split('%20').join(' ');
+	image = image.split('%20').join(' ');
+
+	tags = tags.split('%20').join(' ');
+
+	var tagList = tags.split(",");
+
+	//alert(room +" "+ building +""+ image +""+ tags);
+
+	$('#room').text(room);
+	$('#building').text(building);
+
+	$('#image').html("<img src='resources/img/" + image + ".jpg' alt='Room Photo' class='room-photo'/>");
+
+	// generate tags
+	var arrayLength = tagList.length;
+
+	for (i=0; i<arrayLength; i++) {
+	    $('<span class="tag"/>').text(tagList[i]).appendTo('#tags');
+	}
+
+	if (getUrlVars()["update"] == "true") {
+
+		var date = parseInt(getUrlVars()["date"]);
+	    var month = parseInt(getUrlVars()["month"]);
+	    var day = parseInt(getUrlVars()["day"]);
+	    var hours = parseInt(getUrlVars()["hours"]);
+	    var minutes = parseInt(getUrlVars()["minutes"]);
+
+	    $('#memo').text("Your selected room:");
+	    
+	} else {
+
+		var time = new Date();
+	    var date = time.getUTCDate();
+	    var month = parseInt(time.getMonth() + 1);
+	    var day = time.getDay();
+	    var hours = time.getHours();
+	    var minutes = time.getMinutes();
+
+	}
+
+    $('#when').attr("href","when.html?room=" + room + "&building=" + building + "&tags=" + tags + "&image=" + image + "&date=" + date + "&month=" + month + "&day=" + day + "&hours=" + hours + "&minutes=" + minutes);
+
+
+    var cancel = hours + 2;
+    if (cancel > 12) {
+    	cancel = cancel - 12;
+    	var cancelampm = "PM";
+    } else {
+    	var cancelampm = "AM"
+    }
+
+    minutes=((minutes < 10) ? "0" : "") + minutes;
+    ampm = (hours >= 12) ? "PM" : "AM";
+    hours=(hours > 12) ? hours-12 : hours;
+    hours=(hours == 0) ? 12 : hours;
+
+
+    //if ((minutes > 30) && (minutes < 50)) {
+    //	var cancelMin = "30";
+    //} else {
+    	var cancelMin = "00";
+    //}
+
+
+    var todayTime = new Date();
+    var todayDay = todayTime.getDay();
+    var todayDate = todayTime.getUTCDate();
+
+    var dayText = "day";
+
+    if (day > 7) {
+    	day = day - 7;
+    }
+
+    if (day == todayDay && date == todayDate) {
+    	dayText = "Today";
+    } else if (day == 1) {
+    	dayText = "Mon";
+    } else if (day == 2) {
+    	dayText = "Tue";
+    } else if (day == 3) {
+    	dayText = "Wed";
+    } else if (day == 4) {
+    	dayText = "Thu";
+    } else if (day == 5) {
+    	dayText = "Fri";
+    } else if (day == 6) {
+    	dayText = "Sat";
+    } else if (day == 7) {
+    	dayText = "Sun";
+    }
+
+    var clock = "<span class='where-title' style='font-size: 1em;'>" + dayText + " " + month + "/" + date + "</span> " + hours + ":" + minutes + " " + ampm + " to " + cancel + ":" + cancelMin + " " + cancelampm;
+
+    if(clock != document.getElementById('miniclock').innerHTML) document.getElementById('miniclock').innerHTML = clock;
+
+});
+
+
+
+</script>
+
+
+</html>
